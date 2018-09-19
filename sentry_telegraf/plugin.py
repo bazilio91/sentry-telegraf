@@ -22,7 +22,7 @@ class TelegrafOptionsForm(notify.NotificationConfigurationForm):
     )
     port = forms.CharField(
         label=_('Port'),
-        widget=forms.TextInput(attrs={'port': '8092'}),
+        widget=forms.TextInput(attrs={'port': '8094'}),
     )
 
 
@@ -62,7 +62,7 @@ class TelegrafPlugin(notify.NotificationPlugin):
             {
                 'name': 'port',
                 'label': 'Port',
-                'placeholder': '8092',
+                'placeholder': '8094',
                 'type': 'text',
                 'validators': [],
                 'required': True,
@@ -95,7 +95,10 @@ class TelegrafPlugin(notify.NotificationPlugin):
 
         self.logger.info('will send %s:%s=%s to telegraf', template, group.project, num_errors)
 
-        client.metric(template, num_errors, tags={'project': group.project.slug})
+        tags = {'project': group.project.slug}
+        tags.update(event.tags)
+
+        client.metric(template, num_errors, tags=tags)
 
     def notify_users(self, *args, **kwargs):
         pass
